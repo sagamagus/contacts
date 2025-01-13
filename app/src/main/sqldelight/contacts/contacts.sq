@@ -1,0 +1,31 @@
+CREATE TABLE contactsEntity (
+	id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+	image TEXT NOT NULL ,
+	name TEXT NOT NULL,
+	lastName TEXT NOT NULL,
+	phoneNumber INTEGER NOT NULL,
+	email TEXT NOT NULL,
+	notes TEXT NOT NULL
+);
+
+getContactById:
+SELECT *
+FROM contactsEntity
+WHERE id = :id;
+
+getAllContacts:
+SELECT *
+FROM contactsEntity;
+
+
+insertContact:
+INSERT OR REPLACE
+INTO contactsEntity
+VALUES(?, ?, ?, ?, ?, ?, ?);
+
+deleteContactById:
+
+DELETE FROM contactsEntity
+WHERE id = :id;
+
+
