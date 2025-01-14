@@ -1,9 +1,9 @@
 package com.alfredoguerrero.contacts.domain.usecases
 
-import com.alfredoguerrero.contacts.framework.data.ContactsDS
+import com.alfredoguerrero.contacts.framework.data.ContactsDataSource
 import contacts.ContactsEntity
 
-class ReadContacts(private val local: ContactsDS): UseCase<String, List<ContactsEntity>>()  {
+class ReadContacts(private val local: ContactsDataSource): UseCase<String, List<ContactsEntity>>()  {
 
     override suspend fun execute(input: String): List<ContactsEntity> {
         return local.getAllContacts().filter { it ->

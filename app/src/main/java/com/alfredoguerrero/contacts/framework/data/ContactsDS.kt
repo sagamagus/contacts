@@ -1,6 +1,8 @@
 package com.alfredoguerrero.contacts.framework.data
 
 import android.media.Image
+import app.cash.sqldelight.coroutines.asFlow
+import app.cash.sqldelight.coroutines.mapToList
 import com.alfredoguerrero.contacts.ContactsDatabase
 import contacts.ContactsEntity
 import kotlinx.coroutines.Dispatchers
@@ -17,6 +19,10 @@ class ContactsDS( db: ContactsDatabase): ContactsDataSource {
         return withContext(Dispatchers.IO) {
             queries.getContactById(id).executeAsOneOrNull()
         }
+    }
+
+    override fun getAllContactsFlow(): Flow<List<ContactsEntity>> {
+        return queries.getAllContacts().asFlow().mapToList(Dispatchers.IO)
     }
 
     override fun getAllContacts(): List<ContactsEntity> {
