@@ -7,11 +7,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alfredoguerrero.contacts.domain.entities.Contact
 import com.alfredoguerrero.contacts.domain.usecases.AddOrUpdateContact
-import com.alfredoguerrero.contacts.domain.usecases.CapturePhoto
 import com.alfredoguerrero.contacts.domain.usecases.DeleteContact
 import com.alfredoguerrero.contacts.domain.usecases.ReadContactDetails
 import com.alfredoguerrero.contacts.domain.usecases.ReadContacts
-import com.alfredoguerrero.contacts.framework.CaptureService
 import com.alfredoguerrero.contacts.framework.data.ContactsDataSource
 import contacts.ContactsEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,8 +21,6 @@ import javax.inject.Inject
 class ContactsViewModel @Inject constructor(
     private val dataSource: ContactsDataSource
 ) : ViewModel() {
-
-    lateinit var captureService: CaptureService
 
     private val readContactsUC: ReadContacts by lazy {
         ReadContacts(dataSource)
@@ -42,13 +38,10 @@ class ContactsViewModel @Inject constructor(
         ReadContactDetails(dataSource)
     }
 
-    private val capturePhotoUC: CapturePhoto by lazy {
-        CapturePhoto(captureService)
-    }
-
-    val contactList = dataSource.getAllContactsFlow()
+    var contactList = dataSource.getAllContactsFlow()
     val contacts: ArrayList<ContactsEntity> = arrayListOf()
-    var contactDetails: ContactsEntity? = null
+    var contactDetails by mutableStateOf<ContactsEntity?>(null)
+    var isFiltered by mutableStateOf(false)
     var image = ""
 
     var nameText by mutableStateOf("")
@@ -87,6 +80,11 @@ class ContactsViewModel @Inject constructor(
 
     fun onSearchChange(value: String){
         searchText = value
+        if (value.equals("")){
+            isFiltered = false
+        }else{
+            isFiltered = true
+        }
         getContantcsBySearch()
     }
 
@@ -127,12 +125,6 @@ class ContactsViewModel @Inject constructor(
 
     fun onContactDetailsDialogDismiss(){
         contactDetails = null
-    }
-
-    fun captureImage(){
-        viewModelScope.launch {
-            capturePhotoUC.invoke(Unit)
-        }
     }
 
 }
