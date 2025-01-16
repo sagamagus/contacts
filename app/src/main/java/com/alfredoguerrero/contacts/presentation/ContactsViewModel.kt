@@ -45,15 +45,15 @@ class ContactsViewModel @Inject constructor(
     var image = ""
 
     var nameText by mutableStateOf("")
-        private set
+        public set
     var lastNameText by mutableStateOf("")
-        private set
+        public set
     var phoneText by mutableStateOf("")
-        private set
+        public set
     var emailText by mutableStateOf("")
-        private set
+        public set
     var notesText by mutableStateOf("")
-        private set
+        public set
 
     var searchText by mutableStateOf("")
         private set
@@ -92,7 +92,7 @@ class ContactsViewModel @Inject constructor(
         if (nameText.isBlank() || lastNameText.isBlank() || phoneText.isBlank() || emailText.isBlank() || notesText.isBlank()){
             return
         }
-        val contact = Contact(null,image,nameText,lastNameText, phoneText.toLong(), emailText, notesText)
+        val contact = Contact(contactDetails?.id,image,nameText,lastNameText, phoneText.toLong(), emailText, notesText)
         viewModelScope.launch {
             addOrUpdateContactUC.invoke(contact)
             nameText = ""
@@ -100,6 +100,10 @@ class ContactsViewModel @Inject constructor(
             phoneText = ""
             emailText = ""
             notesText = ""
+            image = ""
+            contactDetails?.let { it ->
+                getContactById(it.id)
+            }
         }
 
     }

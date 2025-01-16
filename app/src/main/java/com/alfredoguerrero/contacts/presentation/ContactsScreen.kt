@@ -65,6 +65,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -139,7 +140,7 @@ fun ContactsScreen(
 
     // Add Contact Dialog
     if (showAddDialog.value) {
-        AddContactDialog(
+        AddOrEditContactDialog(
             onDismiss = { showAddDialog.value = false },
             viewModel = viewModel
         )
@@ -149,19 +150,32 @@ fun ContactsScreen(
     contactDetails?.let { details ->
         ContactDetailsDialog(
             details = details,
-            onDismiss = viewModel::onContactDetailsDialogDismiss
+            viewModel = viewModel
         )
     }
 }
 
 @Composable
-fun AddContactDialog(
+fun AddOrEditContactDialog(
     onDismiss: () -> Unit,
     viewModel: ContactsViewModel
 ) {
     val context = LocalContext.current
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
     val cameraImageUri = remember { mutableStateOf<Uri?>(null) }
+    var showPhoto = remember { mutableStateOf(false) }
+
+    if (viewModel.contactDetails != null) {
+        if (!viewModel.contactDetails!!.image.equals("")){
+            showPhoto.value = true
+            viewModel.image = viewModel.contactDetails!!.image
+        }
+        viewModel.nameText = viewModel.contactDetails!!.name
+        viewModel.lastNameText = viewModel.contactDetails!!.lastName
+        viewModel.emailText = viewModel.contactDetails!!.email
+        viewModel.phoneText = viewModel.contactDetails!!.phoneNumber.toString()
+        viewModel.notesText = viewModel.contactDetails!!.notes
+    }
 
     // Launcher for gallery
     val galleryLauncher = rememberLauncherForActivityResult(
@@ -172,7 +186,7 @@ fun AddContactDialog(
             viewModel.image = savedPath ?: ""
         }
         selectedImageUri = uri
-
+        showPhoto.value = false
     }
 
     // Launcher for camera
@@ -181,6 +195,7 @@ fun AddContactDialog(
     ) { success ->
         if (success) {
             selectedImageUri = cameraImageUri.value
+            showPhoto.value = false
         }
     }
 
@@ -214,6 +229,22 @@ fun AddContactDialog(
                             .clip(CircleShape)
                             .border(2.dp, Color.Gray, CircleShape)
                     )
+                }
+
+                if (showPhoto.value) {
+                    viewModel.contactDetails?.let { it ->
+                        AsyncImage(
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(it.image)
+                                .build(),
+                            contentDescription = "Icono del contacto",
+                            contentScale = ContentScale.Inside,
+                            modifier = Modifier
+                                .size(200.dp)
+                                .clip(CircleShape)
+                                .border(2.dp, Color.Gray, CircleShape)
+                        )
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -276,7 +307,7 @@ fun AddContactDialog(
                     onValueChange = viewModel::onNotesChange,
                     label = "Notas",
                     isPassword = false,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                     icon = Icons.Outlined.Create
                 )
                 Spacer(modifier = Modifier.height(8.dp))
@@ -332,38 +363,65 @@ fun copyUriToInternalStorage(context: Context, uri: Uri): String? {
 @Composable
 fun ContactDetailsDialog(
     details: ContactsEntity,
-    onDismiss: () -> Unit
+    viewModel: ContactsViewModel
 ) {
-    Dialog(onDismissRequest = onDismiss) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentSize()
-                .background(Color.White, shape = RoundedCornerShape(8.dp))
-                .padding(16.dp)
-        ) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                details.image.let { path ->
-                    if (!path.equals("")) {
-                        AsyncImage(
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data(path)
-                                .build(),
-                            contentDescription = "Icono del contacto",
-                            contentScale = ContentScale.Inside,
-                            modifier = Modifier
-                                .size(200.dp)
-                                .clip(CircleShape)
-                                .border(2.dp, Color.Gray, CircleShape)
-                        )
+    val showEditDialog = remember { mutableStateOf(false) }
+    Dialog(onDismissRequest = viewModel::onContactDetailsDialogDismiss) {
+        if (!showEditDialog.value) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentSize()
+                    .background(Color.White, shape = RoundedCornerShape(8.dp))
+                    .padding(16.dp)
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    details.image.let { path ->
+                        if (!path.equals("")) {
+                            AsyncImage(
+                                model = ImageRequest.Builder(LocalContext.current)
+                                    .data(path)
+                                    .build(),
+                                contentDescription = "Icono del contacto",
+                                contentScale = ContentScale.Inside,
+                                modifier = Modifier
+                                    .size(200.dp)
+                                    .clip(CircleShape)
+                                    .border(2.dp, Color.Gray, CircleShape)
+                            )
+                        }
                     }
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(text = "${details.name} ${details.lastName}",
+                    textAlign = TextAlign.Start,
+                        modifier = Modifier.fillMaxWidth())
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(text = details.email,
+                        textAlign = TextAlign.Start,
+                        modifier = Modifier.fillMaxWidth())
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(text = details.phoneNumber.toString(),
+                        textAlign = TextAlign.Start,
+                        modifier = Modifier.fillMaxWidth())
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(text = details.notes,
+                        textAlign = TextAlign.Start,
+                        modifier = Modifier.fillMaxWidth())
+                    Spacer(modifier = Modifier.height(4.dp))
+                    IconTextButton(
+                        text = "Editar contacto",
+                        icon = Icons.Outlined.Create,
+                        onClick = { showEditDialog.value = true },
+                        modifier = Modifier.padding(16.dp)
+                    )
                 }
-                Text(text = details.image)
-                Text(text = "${details.name} ${details.lastName}")
-                Text(text = details.email)
-                Text(text = details.phoneNumber.toString())
-                Text(text = details.notes)
             }
+        }
+        if (showEditDialog.value) {
+            AddOrEditContactDialog(
+                onDismiss = { showEditDialog.value = false },
+                viewModel = viewModel
+            )
         }
     }
 }

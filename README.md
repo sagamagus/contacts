@@ -20,6 +20,14 @@ Public test for clean arquitecture in a contacts app
 
 ## Changelog
 
+### Version 1.1.2 - 2025-01-14
+
+**New Features**
+* **💎 Added ComposableViews for Editing Contact**
+
+**Upgrades**
+* **🧿 Upgraded ComposableViews**
+
 ### Version 1.1.1 - 2025-01-14
 
 **Bugs Fixed**
