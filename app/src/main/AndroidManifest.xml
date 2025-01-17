@@ -21,6 +21,11 @@
         android:theme="@style/Theme.App.Starting"
         tools:targetApi="31">
         <activity
+            android:name=".presentation.PermissionsActivity"
+            android:exported="false"
+            android:label="@string/title_activity_permissions"
+            android:theme="@style/Theme.ContactsTheme" />
+        <activity
             android:name=".presentation.ContactsActivity"
             android:exported="false"
             android:label="@string/title_activity_contacts"
@@ -45,7 +50,6 @@
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
-
         </provider>
     </application>
 

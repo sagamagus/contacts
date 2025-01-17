@@ -1,26 +1,15 @@
 package com.alfredoguerrero.contacts.presentation
 
 import android.animation.ObjectAnimator
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.animation.OvershootInterpolator
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.alfredoguerrero.contacts.presentation.ui.theme.ContactsTheme
+import com.alfredoguerrero.contacts.framework.viewmodels.SplashViewModel
 
 class SplashActivity : ComponentActivity() {
 
@@ -56,13 +45,11 @@ class SplashActivity : ComponentActivity() {
             }
         }
         enableEdgeToEdge()
-        loadContactsActivity()
-    }
-
-    fun loadContactsActivity(){
-        val intent = Intent(this, ContactsActivity::class.java)
+        val intent = viewModel.nextActivity(this)
         startActivity(intent)
         finish()
     }
+
+
 }
 

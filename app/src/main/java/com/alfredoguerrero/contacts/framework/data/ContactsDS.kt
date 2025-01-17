@@ -1,14 +1,11 @@
 package com.alfredoguerrero.contacts.framework.data
 
-import android.media.Image
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.alfredoguerrero.contacts.ContactsDatabase
 import contacts.ContactsEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.withContext
 
 class ContactsDS( db: ContactsDatabase): ContactsDataSource {

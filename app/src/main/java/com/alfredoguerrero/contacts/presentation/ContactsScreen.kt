@@ -1,9 +1,6 @@
 package com.alfredoguerrero.contacts.presentation
 
-import android.content.Context
 import android.net.Uri
-import android.os.Environment
-import android.provider.MediaStore
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -37,17 +34,13 @@ import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Face
 import androidx.compose.material.icons.outlined.Phone
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -74,11 +67,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import coil3.compose.rememberAsyncImagePainter
 import coil3.request.ImageRequest
+import com.alfredoguerrero.contacts.framework.viewmodels.ContactsViewModel
 import contacts.ContactsEntity
-import java.io.File
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 @Composable
 fun ContactsScreen(
@@ -91,7 +81,7 @@ fun ContactsScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp, 46.dp, 26.dp, 16.dp)
+            .padding(26.dp, 56.dp, 26.dp, 36.dp)
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             Row(
@@ -182,7 +172,7 @@ fun AddOrEditContactDialog(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         uri?.let {
-            val savedPath = copyUriToInternalStorage(context, it)
+            val savedPath = viewModel.copyUriToInternalStorage(context, it)
             viewModel.image = savedPath ?: ""
         }
         selectedImageUri = uri
@@ -199,9 +189,9 @@ fun AddOrEditContactDialog(
         }
     }
 
-    // Function to create a temporary file for the camera image
+    // Function to create a file for the camera image
     val createImageUri = {
-        val file = createImageFile(context)
+        val file = viewModel.createImageFile(context)
         viewModel.image = file.absolutePath
         cameraImageUri.value = FileProvider.getUriForFile(
             context,
@@ -315,48 +305,13 @@ fun AddOrEditContactDialog(
                     text = "Añadir contacto",
                     icon = Icons.Outlined.AddCircle,
                     onClick = {
-                        viewModel.onInsertClick()
+                        viewModel.onInsertClick(context)
                         onDismiss()
                               },
                     modifier = Modifier.padding(16.dp)
                 )
             }
         }
-    }
-}
-
-fun createImageFile(context: Context): File {
-    val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-    val storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-    return File.createTempFile(
-        "IMG_${timeStamp}_", /* prefijo del nombre del archivo */
-        ".jpg", /* sufijo */
-        storageDir /* directorio */
-    )
-}
-
-fun copyUriToInternalStorage(context: Context, uri: Uri): String? {
-    return try {
-        // Obtén el InputStream desde el Uri
-        val inputStream = context.contentResolver.openInputStream(uri)
-
-        // Crea un archivo único en el almacenamiento privado
-        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-        val fileName = "IMG_${timeStamp}.jpg"
-        val file = File(context.filesDir, fileName)
-
-        // Copia el contenido del InputStream al archivo
-        inputStream?.use { input ->
-            file.outputStream().use { output ->
-                input.copyTo(output)
-            }
-        }
-
-        // Retorna la ruta absoluta del archivo guardado
-        file.absolutePath
-    } catch (e: Exception) {
-        e.printStackTrace()
-        null
     }
 }
 

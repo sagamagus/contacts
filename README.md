@@ -1,5 +1,5 @@
 # contacts
-Public test for clean arquitecture in a contacts app
+* Public test for clean arquitecture in a contacts app
 
 ## Pre-requisites
 
@@ -11,14 +11,30 @@ Public test for clean arquitecture in a contacts app
 ## used libraríes:
 
 * SQLDelight for database
-* Picasso for image handling
+* Coil for image handling
 * Dagger Hilt for dependency injection
+* Mockito for Unit Testing
 
 ## Relevant technic decisions
+* Implemented MVVM design pattern
 
 ## Areas of improvement or additional functionalities to implement
+* Themes dark/light
+* Additional Tests
+* Contacts calls
+* More animations
+* Different approach on filtering
 
 ## Changelog
+
+### Version 1.2.0 - 2025-01-16
+
+**New Features**
+* **💎 Added Unit Tests**
+
+**Upgrades**
+* **🧿 Added Comments on Code**
+* **🧿 Code Cleaning**
 
 ### Version 1.1.2 - 2025-01-14
 

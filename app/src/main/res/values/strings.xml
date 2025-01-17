@@ -3,4 +3,5 @@
     <string name="choose_text">Selecciona una imagen o toma una foto</string>
     <string name="title_activity_contacts">ContactsActivity</string>
     <string name="title_activity_splash">SplashActivity</string>
+    <string name="title_activity_permissions">PermissionsActivity</string>
 </resources>

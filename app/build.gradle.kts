@@ -15,8 +15,8 @@ android {
         applicationId = "com.alfredoguerrero.contacts"
         minSdk = 31
         targetSdk = 35
-        versionCode = 3
-        versionName = "1.1.1"
+        versionCode = 4
+        versionName = "1.2.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -53,7 +53,6 @@ dependencies {
     implementation(libs.sqldelight)
     implementation(libs.sqldelightcoroutines)
     implementation(libs.coil)
-    implementation(libs.androidx.recyclerview)
     implementation(libs.dagger.hilt)
     implementation(libs.hilt.compose)
     implementation(libs.androidx.activity)
@@ -71,6 +70,9 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     kapt(libs.dagger.hilt.compiler)
     testImplementation(libs.junit)
+    testImplementation(libs.mockito)
+    testImplementation(libs.mockitoKotlin)
+    testImplementation(libs.ktxCoroutinesTest)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }

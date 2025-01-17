@@ -2,7 +2,6 @@ package com.alfredoguerrero.contacts.domain.usecases
 
 import com.alfredoguerrero.contacts.domain.entities.Contact
 import com.alfredoguerrero.contacts.framework.data.ContactsDataSource
-import contacts.ContactsEntity
 
 class AddOrUpdateContact(private val local: ContactsDataSource): UseCase<Contact, Unit>()  {
     override suspend fun execute(input: Contact) {
